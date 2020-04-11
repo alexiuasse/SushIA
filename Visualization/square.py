@@ -1,38 +1,48 @@
+import pygame as pg
+from pygame.locals import *
+
 from OpenGL.GL import *
-from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
-w,h= 500,500
+cubeVertices = ((1,1,1),(1,1,-1),(1,-1,-1),(1,-1,1),(-1,1,1),(-1,-1,-1),(-1,-1,1),(-1,1,-1))
+cubeEdges = ((0,1),(0,3),(0,4),(1,2),(1,7),(2,5),(2,3),(3,6),(4,6),(4,7),(5,6),(5,7))
+cubeQuads = ((0,3,6,4),(2,5,6,3),(1,2,5,7),(1,0,4,7),(7,4,6,5),(2,3,0,1))
 
-def square():
-    glBegin(GL_QUADS)
-    glVertex2f(100, 100)
-    glVertex2f(200, 100)
-    glVertex2f(200, 200)
-    glVertex2f(100, 200)
+def wireCube():
+    glBegin(GL_LINES)
+    for cubeEdge in cubeEdges:
+        for cubeVertex in cubeEdge:
+            glVertex3fv(cubeVertices[cubeVertex])
     glEnd()
 
-def iterate():
-    glViewport(0, 0, 500, 500)
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
-    glMatrixMode (GL_MODELVIEW)
-    glLoadIdentity()
+def solidCube():
+    glBegin(GL_QUADS)
+    for cubeQuad in cubeQuads:
+        for cubeVertex in cubeQuad:
+            glVertex3fv(cubeVertices[cubeVertex])
+    glEnd()
 
-def showScreen():
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glLoadIdentity()
-    iterate()
-    glColor3f(1.0, 0.0, 3.0)
-    square()
-    glutSwapBuffers()
+def main():
+    pg.init()
+    display = (500, 500)
+    pg.display.set_mode(display, DOUBLEBUF|OPENGL)
 
-glutInit()
-glutInitDisplayMode(GLUT_RGBA)
-glutInitWindowSize(500, 500)
-glutInitWindowPosition(0, 0)
-wind = glutCreateWindow("OpenGL Coding Practice")
-glutDisplayFunc(showScreen)
-glutIdleFunc(showScreen)
-glutMainLoop()
+    gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
+
+    glTranslatef(0.0, 0.0, -5)
+
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                quit()
+
+        glRotatef(1, 1, 1, 1)
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        solidCube()
+        #wireCube()
+        pg.display.flip()
+        pg.time.wait(10)
+
+if __name__ == "__main__":
+    main()
