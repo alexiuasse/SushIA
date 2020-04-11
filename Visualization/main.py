@@ -65,7 +65,7 @@ def main():
                     y_rotate -= 1
                 if event.key == pg.K_DOWN:
                     y_rotate += 1
-        clock.tick(10)
+        clock.tick(1)
         # glTranslatef(x_rotate,y_rotate,z_rotate)
         # glRotatef(x_rotate, y_rotate, 0, 1)
         # glTranslatef(0.0, math.sin(angle), 0.0)
